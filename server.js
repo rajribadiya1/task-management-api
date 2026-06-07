@@ -1,38 +1,40 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const cors = require('cors');
+const path = require('path');
 const connectDB = require('./src/config/database');
 
 // Load environment variables
 dotenv.config();
 
-// Connect to MongoDB Atlas
+// Connect to database
 connectDB();
 
 const app = require('./src/app');
 
-// Start server only after DB connection
+// Serve static files (HTML page)
+app.use(express.static('public'));
+
 const PORT = process.env.PORT || 3000;
 
-// Only start listening after DB connection is successful
-const startServer = async () => {
-  try {
-    const server = app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📝 Environment: ${process.env.NODE_ENV}`);
-      console.log(`🔗 API URL: http://localhost:${PORT}`);
-      console.log(`✅ Ready to accept requests`);
-    });
-    
-    // Handle unhandled promise rejections
-    process.on('unhandledRejection', (err, promise) => {
-      console.log('❌ Unhandled Rejection:', err.message);
-      server.close(() => process.exit(1));
-    });
-    
-  } catch (error) {
-    console.error('Failed to start server:', error);
-  }
-};
+const server = app.listen(PORT, () => {
+  console.log(`\n🚀 Server running on port ${PORT}`);
+  console.log(`📝 Environment: ${process.env.NODE_ENV}`);
+  console.log(`🔗 API URL: http://localhost:${PORT}`);
+  console.log(`🌐 Web Interface: http://localhost:${PORT}`);
+  console.log(`\n📋 Available endpoints:`);
+  console.log(`   GET  http://localhost:${PORT}/`);
+  console.log(`   GET  http://localhost:${PORT}/health`);
+  console.log(`   GET  http://localhost:${PORT}/api/test`);
+  console.log(`   POST http://localhost:${PORT}/api/auth/register`);
+  console.log(`   POST http://localhost:${PORT}/api/auth/login`);
+  console.log(`   GET  http://localhost:${PORT}/api/auth/users`);
+  console.log(`   GET  http://localhost:${PORT}/api/tasks`);
+  console.log(`   POST http://localhost:${PORT}/api/tasks`);
+  console.log(`\n✅ Ready to accept requests\n`);
+});
 
-startServer();
+// Handle unhandled rejection
+process.on('unhandledRejection', (err) => {
+  console.log('❌ Unhandled Rejection:', err.message);
+  server.close(() => process.exit(1));
+});

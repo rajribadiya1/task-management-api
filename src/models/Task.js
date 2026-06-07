@@ -4,14 +4,10 @@ const taskSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, 'Title is required'],
-    trim: true,
-    minlength: [3, 'Title must be at least 3 characters'],
-    maxlength: [100, 'Title cannot exceed 100 characters']
+    trim: true
   },
   description: {
     type: String,
-    trim: true,
-    maxlength: [500, 'Description cannot exceed 500 characters'],
     default: ''
   },
   priority: {
@@ -25,24 +21,16 @@ const taskSchema = new mongoose.Schema({
     default: 'todo'
   },
   dueDate: {
-    type: Date,
-    validate: {
-      validator: function(value) {
-        return value >= new Date().setHours(0, 0, 0, 0);
-      },
-      message: 'Due date cannot be in the past'
-    }
+    type: Date
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: [true, 'User is required']
+    required: true
   }
 }, {
   timestamps: true
 });
 
-// Index for better query performance
-taskSchema.index({ user: 1, status: 1, priority: 1, dueDate: 1 });
-
-module.exports = mongoose.model('Task', taskSchema);
+const Task = mongoose.model('Task', taskSchema);
+module.exports = Task;

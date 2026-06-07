@@ -5,14 +5,14 @@ const {
   getTasks,
   getTask,
   updateTask,
-  deleteTask,
-  adminDeleteTask
+  deleteTask
 } = require('../controllers/taskController');
-const { protect, admin } = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 
-// All task routes require authentication
+// Apply authentication to all task routes
 router.use(protect);
 
+// Task routes
 router.route('/')
   .post(createTask)
   .get(getTasks);
@@ -21,8 +21,5 @@ router.route('/:id')
   .get(getTask)
   .put(updateTask)
   .delete(deleteTask);
-
-// Admin only route
-router.delete('/admin/:id', admin, adminDeleteTask);
 
 module.exports = router;

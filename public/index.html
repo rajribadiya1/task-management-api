@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Management API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        .endpoint {
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .method {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .GET { background: #4CAF50; color: white; }
+        .POST { background: #2196F3; color: white; }
+        .PUT { background: #FF9800; color: white; }
+        .DELETE { background: #f44336; color: white; }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        pre {
+            background: #333;
+            color: #fff;
+            padding: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Task Management API</h1>
+        <p>Your API is running! Use these endpoints:</p>
+        
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <a href="/health">/health</a> - Health check
+        </div>
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <a href="/api/test">/api/test</a> - Test endpoint
+        </div>
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            /api/auth/register - Register user
+        </div>
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            /api/auth/login - Login user
+        </div>
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            /api/auth/users - Get all users
+        </div>
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            /api/tasks - Get all tasks
+        </div>
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            /api/tasks - Create task
+        </div>
+        
+        <h2>Test Registration</h2>
+        <input type="text" id="name" placeholder="Name" value="Test User">
+        <input type="email" id="email" placeholder="Email" value="test@example.com">
+        <input type="password" id="password" placeholder="Password" value="test123">
+        <button onclick="register()">Register</button>
+        
+        <h2>Test Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email" value="test@example.com">
+        <input type="password" id="loginPassword" placeholder="Password" value="test123">
+        <button onclick="login()">Login</button>
+        
+        <h2>Get All Users</h2>
+        <button onclick="getUsers()">Get Users</button>
+        
+        <h3>Response:</h3>
+        <pre id="response">Click any button to see response...</pre>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+        
+        async function register() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+                const data = await response.json();
+                document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+                    alert('Registration successful! Token saved.');
+                }
+            } catch (error) {
+                document.getElementById('response').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+                    alert('Login successful! Token saved.');
+                }
+            } catch (error) {
+                document.getElementById('response').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        async function getUsers() {
+            try {
+                const response = await fetch(`${API_URL}/api/auth/users`);
+                const data = await response.json();
+                document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('response').textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

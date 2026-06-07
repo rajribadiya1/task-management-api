@@ -5,33 +5,29 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Name is required'],
-    trim: true,
+    trim: true
   },
   email: {
     type: String,
     required: [true, 'Email is required'],
     unique: true,
-    lowercase: true,
+    lowercase: true
   },
   password: {
     type: String,
     required: [true, 'Password is required'],
-    select: false,
+    select: false
   },
   role: {
     type: String,
     enum: ['user', 'admin'],
-    default: 'user',
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+    default: 'user'
+  }
 }, {
-  timestamps: true,
+  timestamps: true
 });
 
-// Hash password before saving
+// Hash password
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   const salt = await bcrypt.genSalt(10);
@@ -39,17 +35,10 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-// Compare password method
+// Compare password
 userSchema.methods.comparePassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Export model
-let User;
-try {
-  User = mongoose.model('User');
-} catch (error) {
-  User = mongoose.model('User', userSchema);
-}
-
-module.exports = async () => User;
+const User = mongoose.model('User', userSchema);
+module.exports = User;
